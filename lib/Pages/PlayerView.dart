@@ -21,15 +21,15 @@ class _PlayPageState extends State<PlayPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color(0xff2D2D2D),
+
         title: Text(widget.songName),
       ),
       body: Center(
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Container(
-              color: Color(0xff252525),
-            ),
+            Container()
 
           ],
         ),
