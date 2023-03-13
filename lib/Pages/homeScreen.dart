@@ -10,34 +10,41 @@ class homeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color(0xff2d2d2d),
         title: Text(
           "Mixl",
           textAlign: TextAlign.center,
         ),
       ),
       body: Column(
+
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           ListView.builder(
             shrinkWrap: true,
             itemCount: songs.length,
             itemBuilder: (BuildContext context, int index) {
-              return ListTile(
-                title: Text(songs[index]),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PlayPage(songName: songs[index]),
-                    ),
-                  );
-                },
+              return Expanded(
+
+                child: ListTile(
+                  tileColor: const Color(0xff252525),
+                  title: Text(songs[index],textAlign: TextAlign.center, style: TextStyle(color: Colors.white),),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PlayPage(songName: songs[index]),
+                      ),
+                    );
+                  },
+                ),
               );
             },
           ),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
+
         //currentIndex: _selectedIndex,
         //onTap: _onItemTapped,
         items: const [
@@ -50,6 +57,7 @@ class homeScreen extends StatelessWidget {
             label: '',
           ),
           BottomNavigationBarItem(
+
             icon: Icon(Icons.settings),
             label: '',
           ),
