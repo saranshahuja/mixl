@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
+import 'PlayerView.dart';
+
+
 class homeScreen extends StatelessWidget {
-  const homeScreen({Key? key}) : super(key: key);
+   List<String> songs = [  'Song 1',    'Song 2',    'Song 3',    'Song 4',    'Song 5',  ];
 
   @override
   Widget build(BuildContext context) {
@@ -15,12 +18,22 @@ class homeScreen extends StatelessWidget {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          Stack(
-            children: [
-              Row(
-                children: <Widget>[                ],
-              ),
-            ],
+          ListView.builder(
+            shrinkWrap: true,
+            itemCount: songs.length,
+            itemBuilder: (BuildContext context, int index) {
+              return ListTile(
+                title: Text(songs[index]),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PlayPage(songName: songs[index]),
+                    ),
+                  );
+                },
+              );
+            },
           ),
         ],
       ),
