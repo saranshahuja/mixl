@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mixl/Pages/Login.dart';
+import '../widgets/theme.dart';
 import 'homeScreen.dart';
 //kxz
 void main() {
@@ -15,10 +16,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Mixl',
-      theme: ThemeData(
-
-        primarySwatch: Colors.blueGrey,
-      ),
+      theme: customTheme,
       home: homeScreen(),
     );
   }

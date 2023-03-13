@@ -18,9 +18,7 @@ class homeScreen extends StatelessWidget {
           Stack(
             children: [
               Row(
-                children: <Widget>[
-
-                ],
+                children: <Widget>[                ],
               ),
             ],
           ),
