@@ -31,10 +31,13 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('User Settings'),
+      backgroundColor: const Color(0xff252525),
+        title: const Text('Settings'),
       ),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
+
           Text(_currentName,style: TextStyle(fontSize: 32),),
           ListView(
             shrinkWrap: true,
@@ -76,6 +79,9 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xff7A51E2),
+                ),
                 onPressed: _saveChanges,
                 child: const Text('Save Changes'),
               ),
