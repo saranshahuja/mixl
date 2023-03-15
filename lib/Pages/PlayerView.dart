@@ -28,94 +28,55 @@ class _PlayPageState extends State<PlayPage> {
       ),
       body: SafeArea(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage('assets/album_art.jpg'),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      'Song Title',
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    SizedBox(height: 8.0),
-                    Text(
-                      'Artist Name',
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        color: Colors.white,
-                      ),
-                    ),
-                    SizedBox(height: 16.0),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        IconButton(
-                          icon: Icon(Icons.skip_previous, color: Colors.white),
-                          onPressed: () {},
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.play_arrow, color: Colors.white, size: 48.0),
-                          onPressed: () {},
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.skip_next, color: Colors.white),
-                          onPressed: () {},
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
             Container(
-              height: 100.0,
+              height: 300,
               decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    Text(
-                      'Lyrics',
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      'Verse 1',
-                      style: TextStyle(fontSize: 16.0),
-                    ),
-                    Text(
-                      'Chorus',
-                      style: TextStyle(fontSize: 16.0),
-                    ),
-                    Text(
-                      'Verse 2',
-                      style: TextStyle(fontSize: 16.0),
-                    ),
-                    Text(
-                      'Chorus',
-                      style: TextStyle(fontSize: 16.0),
-                    ),
-                  ],
+                image: DecorationImage(
+                  image: AssetImage('assets/album_art.jpg'),
+                  fit: BoxFit.contain,
                 ),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    'Song Title',
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+
+                  Text(
+                    'Artist Name',
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      color: Colors.black,
+                    ),
+                  ),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      IconButton(
+                        icon: Icon(Icons.skip_previous, color: Colors.black),
+                        onPressed: () {},
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.play_arrow, color: Colors.black, size: 48.0),
+                        onPressed: () {},
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.skip_next, color: Colors.black),
+                        onPressed: () {},
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ],
