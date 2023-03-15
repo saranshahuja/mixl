@@ -39,6 +39,7 @@ dependencies:
   firebase_core: ^2.7.1
   cloud_firestore: ^4.4.4
   firebase_auth: ^4.2.10
+  audioplayers: ^3.0.1
 
 
 
