@@ -18,7 +18,7 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> _login() async {
     setState(() {
       _isLoading = true;
-      _errorMessage = null;
+      _errorMessage = 'null';
     });
 
     try {
@@ -31,7 +31,7 @@ class _LoginPageState extends State<LoginPage> {
     } on FirebaseAuthException catch (e) {
       setState(() {
         _isLoading = false;
-        _errorMessage = e.message;
+        _errorMessage = e.message!;
       });
     }
   }
