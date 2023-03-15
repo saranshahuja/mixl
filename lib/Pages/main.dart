@@ -4,6 +4,7 @@ import '../widgets/theme.dart';
 import 'homeScreen.dart';
 import 'Search.dart';
 import 'Settings.dart';
+import 'PlayerView.dart';
 //kxz
 void main() {
   runApp(const MyApp());
@@ -19,7 +20,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Mixl',
       theme: customTheme,
-      home: Admin(),
+      home: homeScreen(),
     );
   }
 }
