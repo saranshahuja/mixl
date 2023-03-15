@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mixl/Pages/Admin.dart';
 import '../widgets/theme.dart';
 import 'homeScreen.dart';
 import 'Search.dart';
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Mixl',
       theme: customTheme,
-      home: UserSettingsPage(),
+      home: Admin(),
     );
   }
 }
