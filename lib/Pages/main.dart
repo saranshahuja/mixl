@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:mixl/Pages/Admin.dart';
+import 'package:mixl/Pages/Home.dart';
+
+
 import '../widgets/theme.dart';
-import 'homeScreen.dart';
-import 'Search.dart';
-import 'Settings.dart';
-import 'PlayerView.dart';
-//kxz
-void main() {
+import 'package:firebase_core/firebase_core.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Mixl',
       theme: customTheme,
-      home: homeScreen(),
+      home: UserPage(),
     );
   }
 }
