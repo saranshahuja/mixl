@@ -36,7 +36,8 @@ class _AdminPageState extends State<AdminPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Admin Page')),
+      appBar: AppBar(title: Text('Admin Page'),
+          backgroundColor: Color(0xff2D2D2D)),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

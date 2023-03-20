@@ -45,7 +45,7 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
 
 
               ListTile(
-                title: const Text('Change User Name'),
+                title: const Text('Change User Name',style: TextStyle(color: Colors.white),),
                 trailing: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -66,7 +66,7 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
                 ),
               ),
               ListTile(
-                title: const Text('Change Email'),
+                title: const Text('Change Email',style: TextStyle(color: Colors.white),),
                 trailing: SizedBox(
                   width: 200,
                   child: TextField(

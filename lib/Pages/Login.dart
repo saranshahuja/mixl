@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/services.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:mixl/Pages/Admin.dart';
+import 'package:mixl/Pages/Home.dart';
+
+
 
 class LoginPage extends StatefulWidget {
   @override
@@ -8,98 +13,137 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  bool _isLoading = false;
-  late String _errorMessage;
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
 
-
-  Future<void> _login() async {
-    setState(() {
-      _isLoading = true;
-      _errorMessage = 'null';
-    });
-
-    try {
-      final UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-        email: _emailController.text.trim(),
-        password: _passwordController.text.trim(),
-      );
-      // Navigate to home screen after successful login
-      Navigator.of(context).pushReplacementNamed('/home');
-    } on FirebaseAuthException catch (e) {
-      setState(() {
-        _isLoading = false;
-        _errorMessage = e.message!;
-      });
-    }
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 
+  Future<void> _login() async {
+    if (_formKey.currentState!.validate()) {
+      int maxRetries = 3;
+      int retryInterval = 1000; // in milliseconds
 
+      for (int retryCount = 0; retryCount <= maxRetries; retryCount++) {
+        try {
+          UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+            email: _emailController.text.trim(),
+            password: _passwordController.text,
+          );
+
+          DocumentSnapshot docSnap = await FirebaseFirestore.instance.collection('users').doc(userCredential.user?.uid).get();
+          String role = (docSnap.data() as Map<String, dynamic>)['role'];
+
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => role == 'admin' ? AdminPage() : UserPage(),
+            ),
+          );
+          break; // Break the loop on successful login
+        } catch (e) {
+          if (retryCount == maxRetries) {
+            print("Error: $e");
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text('Error'),
+                  content: Text('The service is currently unavailable. Please try again later.'),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('OK'),
+                    ),
+                  ],
+                );
+              },
+            );
+          } else {
+
+          }
+        }
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
 
-        child: Column(
+      backgroundColor: Colors.black,
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
 
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: _emailController,
-              keyboardType: TextInputType.emailAddress,
-              decoration: const InputDecoration(
-                labelText: 'Email',
-              ),
-            ),
-            TextField(
-              controller: _passwordController,
-              obscureText: true,
-              decoration: const InputDecoration(
-                labelText: 'Password',
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
+          Form(
+            key: _formKey,
+            child: Column(
 
-                _isLoading
-                    ? CircularProgressIndicator()
-                    : ElevatedButton(
-                  onPressed: _login,
-                  child: Text('Login'),
-                ),
-                if (_errorMessage != null)
-                  Text(
-                    _errorMessage,
-                    style: TextStyle(
-                      color: Colors.red,
-                    ),
+              children: [
+
+                Image.asset('lib/assets/Avatar.png', width: 250, height: 250), // Replace 'assets/logo.png' with the path of your image
+
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFormField(
+                    scrollPadding: EdgeInsets.all(15),
+                    controller: _emailController,
+                    decoration: InputDecoration(labelText: 'Email',),
+                    keyboardType: TextInputType.emailAddress,
+                    validator: (value) {
+                      if (value!.isEmpty || !value.contains('@')) {
+                        return 'Please enter a valid email';
+                      }
+                      return null;
+                    },
                   ),
-                ElevatedButton(
-                  onPressed: () async {
-                    // final email = _emailController.text.trim();
-                    // final password = _passwordController.text.trim();
-                    // final auth = context.read(authProvider);
-                    // final user = await auth.signIn(email, password);
-                    // if (user != null) {
-                    //   // Navigate to home screen
-                    // } else {
-                    //   // Show error message
-                    // }
-                  },
-                  child: const Text('Sign up'),)
+                ),
+
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFormField(
+                    controller: _passwordController,
+                    decoration: InputDecoration(labelText: 'Password'),
+                    obscureText: true,
+                    validator: (value) {
+                      if (value!.isEmpty || value.length < 6) {
+                        return 'Please enter a valid password (at least 6 characters)';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+
+                    ElevatedButton(
+                      onPressed: _login,
+                      child: Text('Login'),
+                    ),
+                    ElevatedButton(
+                      onPressed: _login,
+                      child: Text('Signup'),
+                    ),
+                  ],
+                ),
 
               ],
             ),
-
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 }
 
-
+ 

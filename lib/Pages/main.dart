@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mixl/Pages/Admin.dart';
 import 'package:mixl/Pages/Home.dart';
+import 'package:mixl/Pages/Login.dart';
 
 
 import '../widgets/theme.dart';
@@ -20,8 +22,36 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Mixl',
-      theme: customTheme,
-      home: UserPage(),
+      theme: ThemeData(
+        primaryColor: Colors.deepPurple,
+        accentColor: Colors.deepPurpleAccent,
+        scaffoldBackgroundColor: Colors.black, // Set the default Scaffold background color to black
+        textTheme: TextTheme(
+          bodyText1: TextStyle(color: Colors.white), // Set default text color to white
+          bodyText2: TextStyle(color: Colors.white), // Set default text color to white
+          button: TextStyle(color: Colors.white),
+          // Set button text color to white
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            primary: Colors.deepPurple,
+          ),
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+            labelStyle: TextStyle(color: Colors.white), // Set input field label color to white
+            hintStyle: TextStyle(color: Colors.white), // Set input field hint color to white
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.deepPurpleAccent),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.deepPurple),
+            ),
+          fillColor: Colors.white.withOpacity(0.1), // Set input field fill color to a transparent white
+          filled: true, // Enable input field fill color
+          ),
+        ),
+
+      home: LoginPage(),
     );
   }
 }

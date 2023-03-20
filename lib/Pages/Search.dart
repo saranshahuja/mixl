@@ -29,6 +29,8 @@ class _KeywordSearchPageState extends State<KeywordSearchPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Search'),
+          backgroundColor: Color(0xff2D2D2D),
+
       ),
       body: Column(
         children: [

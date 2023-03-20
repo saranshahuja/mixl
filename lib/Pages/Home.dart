@@ -77,24 +77,30 @@ class _UserPageState extends State<UserPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('User Page')),
+      appBar: AppBar(title: Text('User Page'),
+          backgroundColor: Color(0xff2D2D2D)),
       body: ListView.builder(
         shrinkWrap: true,
         itemCount: songs.length,
         itemBuilder: (BuildContext context, int index) {
           return Expanded(
 
-            child: ListTile(
-              tileColor: const Color(0xff252525),
-              title: Text(songs[index],textAlign: TextAlign.center, style: TextStyle(color: Colors.white),),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => PlayPage(songName: songs[index]),
-                  ),
-                );
-              },
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+
+              child: ListTile(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+                tileColor: const Color(0xff252525),
+                title: Text(songs[index],textAlign: TextAlign.center, style: TextStyle(color: Colors.white),),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PlayPage(songName: songs[index]),
+                    ),
+                  );
+                },
+              ),
             ),
           );
         },

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 final ThemeData customTheme = ThemeData(
   primaryColor: Color(0xff2D2D2D),
-  accentColor: Color(0xff7A51E2),
 
   textTheme: TextTheme(
     headline1: TextStyle(
@@ -13,5 +12,5 @@ final ThemeData customTheme = ThemeData(
       fontSize: 16,
       color: Colors.grey[800],
     ),
-  ),
+  ), colorScheme: ColorScheme.fromSwatch().copyWith(secondary: Color(0xff7A51E2)),
 );
