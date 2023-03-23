@@ -26,7 +26,6 @@ class _UserPageState extends State<UserPage> {
 
 
   final List<Widget> pages = [
-    UserPage(),
     KeywordSearchPage(),
     UserSettingsPage(),
   ];
@@ -120,7 +119,7 @@ class _UserPageState extends State<UserPage> {
 
         },
         items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+
           BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
           BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
         ],

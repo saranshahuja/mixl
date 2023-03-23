@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mixl/Pages/Admin.dart';
 import 'package:mixl/Pages/Home.dart';
 import 'package:mixl/Pages/Login.dart';
+import 'package:mixl/Pages/signup.dart';
 
 
 import '../widgets/theme.dart';
@@ -51,7 +52,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
 
-      home: LoginPage(),
+      home: UserPage(),
     );
   }
 }

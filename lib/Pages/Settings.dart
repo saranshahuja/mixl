@@ -89,24 +89,7 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        //currentIndex: _selectedIndex,
-        //onTap: _onItemTapped,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: '',
-          ),
-        ],
-      ),
+
     );
   }
 }
