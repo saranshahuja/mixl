@@ -78,68 +78,70 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
 
       backgroundColor: Colors.black,
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
 
-          Form(
-            key: _formKey,
-            child: Column(
+            Form(
+              key: _formKey,
+              child: Column(
 
-              children: [
+                children: [
 
-                Image.asset('lib/assets/Avatar.png', width: 250, height: 250), // Replace 'assets/logo.png' with the path of your image
+                  Image.asset('lib/assets/Avatar.png', width: 250, height: 250), // Replace 'assets/logo.png' with the path of your image
 
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    scrollPadding: EdgeInsets.all(15),
-                    controller: _emailController,
-                    decoration: InputDecoration(labelText: 'Email',),
-                    keyboardType: TextInputType.emailAddress,
-                    validator: (value) {
-                      if (value!.isEmpty || !value.contains('@')) {
-                        return 'Please enter a valid email';
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    controller: _passwordController,
-                    decoration: InputDecoration(labelText: 'Password'),
-                    obscureText: true,
-                    validator: (value) {
-                      if (value!.isEmpty || value.length < 6) {
-                        return 'Please enter a valid password (at least 6 characters)';
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-
-                    ElevatedButton(
-                      onPressed: _login,
-                      child: Text('Login'),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextFormField(
+                      scrollPadding: EdgeInsets.all(15),
+                      controller: _emailController,
+                      decoration: InputDecoration(labelText: 'Email',),
+                      keyboardType: TextInputType.emailAddress,
+                      validator: (value) {
+                        if (value!.isEmpty || !value.contains('@')) {
+                          return 'Please enter a valid email';
+                        }
+                        return null;
+                      },
                     ),
-                    ElevatedButton(
-                      onPressed: _login,
-                      child: Text('Signup'),
-                    ),
-                  ],
-                ),
+                  ),
 
-              ],
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextFormField(
+                      controller: _passwordController,
+                      decoration: InputDecoration(labelText: 'Password'),
+                      obscureText: true,
+                      validator: (value) {
+                        if (value!.isEmpty || value.length < 6) {
+                          return 'Please enter a valid password (at least 6 characters)';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+
+                      ElevatedButton(
+                        onPressed: _login,
+                        child: Text('Login'),
+                      ),
+                      ElevatedButton(
+                        onPressed: _login,
+                        child: Text('Signup'),
+                      ),
+                    ],
+                  ),
+
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
