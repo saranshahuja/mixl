@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mixl/Pages/Admin.dart';
 import 'package:mixl/Pages/Home.dart';
+import 'package:mixl/Pages/Login.dart';
 
 class SignupPage extends StatefulWidget {
   @override
@@ -107,6 +108,7 @@ class _SignupPageState extends State<SignupPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Checkbox(
+                      hoverColor: Colors.white,
                       value: _isAdmin,
                       onChanged: (bool? value) {
                         setState(() {
@@ -122,6 +124,17 @@ class _SignupPageState extends State<SignupPage> {
                   onPressed: _signup,
                   child: Text('Sign Up'),
                 ),
+                TextButton(onPressed: () {
+                  Navigator.pop(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => LoginPage(),
+                    ),
+                  );
+                },
+
+
+                    child: Text('Go back to login', style: TextStyle(color: Colors.white),))
               ],
             ),
           ),
