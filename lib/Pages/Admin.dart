@@ -1,9 +1,9 @@
 import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:mixl/Pages/Login.dart';
-import 'package:path/path.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class AdminPage extends StatefulWidget {
@@ -12,74 +12,45 @@ class AdminPage extends StatefulWidget {
 }
 
 class _AdminPageState extends State<AdminPage> {
-  final FirebaseStorage _storage = FirebaseStorage.instance;
-  final TextEditingController _oldFileNameController = TextEditingController();
-  final TextEditingController _newFileNameController = TextEditingController();
+  File? _selectedFile;
+  String? _fileName;
 
-  // Upload the PDF file to Firebase Storage
-  Future<void> _uploadFile() async {
-    FilePickerResult? result = await FilePicker.platform
-        .pickFiles(type: FileType.custom, allowedExtensions: ['pdf']);
-
+  Future<void> _selectFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
     if (result != null) {
-      File file = File(result.files.single.path!);
-      String fileName = basename(file.path);
-
-      try {
-        await _storage.ref('pdfs/$fileName').putFile(file);
-        ScaffoldMessenger.of(this.context).showSnackBar(
-            SnackBar(content: Text('File uploaded successfully!')));
-      } on FirebaseException catch (e) {
-        ScaffoldMessenger.of(this.context)
-            .showSnackBar(SnackBar(content: Text(e.message!)));
-      }
-    } else {
-      ScaffoldMessenger.of(this.context)
-          .showSnackBar(SnackBar(content: Text('No file selected')));
+      setState(() {
+        _selectedFile = File(result.files.single.path!);
+        _fileName = result.files.single.name;
+      });
     }
   }
 
-  Future<void> _deleteFile() async {
-    String oldFileName = _oldFileNameController.text;
+  Future<void> _uploadFile() async {
+    if (_selectedFile == null || _fileName == null) return;
 
-    if (oldFileName.isNotEmpty) {
-      try {
-        await _storage.ref('pdfs/$oldFileName').delete();
-        ScaffoldMessenger.of(this.context).showSnackBar(
-            SnackBar(content: Text('File deleted successfully!')));
-      } on FirebaseException catch (e) {
-        ScaffoldMessenger.of(this.context)
-            .showSnackBar(SnackBar(content: Text(e.message!)));
-      }
-    } else {
-      ScaffoldMessenger.of(this.context).showSnackBar(
-          SnackBar(content: Text('Enter the file name to delete')));
-    }
-  }
+    FirebaseStorage storage = FirebaseStorage.instance;
+    Reference storageRef = storage.ref().child(_fileName!);
 
-  // Rename the PDF file in Firebase Storage
-  Future<void> _renameFile() async {
-    String oldFileName = _oldFileNameController.text;
-    String newFileName = _newFileNameController.text;
-
-    if (oldFileName.isNotEmpty && newFileName.isNotEmpty) {
-      try {
-        // Copy the old file to the new file
-        await _storage.ref('pdfs/$newFileName').putFile(
-            (await _storage.ref('pdfs/$oldFileName').getData()) as File);
-
-        // Delete the old file
-        await _storage.ref('pdfs/$oldFileName').delete();
-
-        ScaffoldMessenger.of(this.context).showSnackBar(
-            SnackBar(content: Text('File renamed successfully!')));
-      } on FirebaseException catch (e) {
-        ScaffoldMessenger.of(this.context)
-            .showSnackBar(SnackBar(content: Text(e.message!)));
-      }
-    } else {
-      ScaffoldMessenger.of(this.context).showSnackBar(
-          SnackBar(content: Text('Enter both old and new file names')));
+    try {
+      await storageRef.putFile(_selectedFile!);
+      print('File uploaded successfully!');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: Text('File Uploaded'),
+          content: Text('The file has been uploaded successfully.'),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+    } catch (e) {
+      print('Error uploading file: $e');
     }
   }
 
@@ -87,7 +58,8 @@ class _AdminPageState extends State<AdminPage> {
     try {
       await FirebaseAuth.instance.signOut();
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => LoginPage()));
+          context,
+          MaterialPageRoute(builder: (context) => LoginPage()));
     } catch (e) {
       print('Error while signing out: $e');
     }
@@ -97,8 +69,9 @@ class _AdminPageState extends State<AdminPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Admin Page'),
+        title: Text('Admin'),
         backgroundColor: Color(0xff2D2D2D),
+        automaticallyImplyLeading: false,
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.logout),
@@ -107,41 +80,23 @@ class _AdminPageState extends State<AdminPage> {
         ],
       ),
       body: Center(
-        child: Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextField(
-                controller: _oldFileNameController,
-                decoration: InputDecoration(
-                  labelText: 'Old File Name',
-                ),
-              ),
-              SizedBox(height: 16.0),
-              TextField(
-                controller: _newFileNameController,
-                decoration: InputDecoration(
-                  labelText: 'New File Name',
-                ),
-              ),
-              SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: _uploadFile,
-                child: Text('Upload PDF File'),
-              ),
-              SizedBox(height: 160),
-              ElevatedButton(
-                onPressed: _deleteFile,
-                child: Text('Delete PDF File'),
-              ),
-              SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: _renameFile,
-                child: Text('Rename PDF File'),
-              ),
-            ],
-          ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _selectedFile != null
+                ? Text('Selected File: $_fileName')
+                : Text('No file selected'),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _selectFile,
+              child: Text('Select File'),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _uploadFile,
+              child: Text('Upload File'),
+            ),
+          ],
         ),
       ),
     );

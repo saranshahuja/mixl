@@ -49,6 +49,8 @@ dependencies:
   firebase_database: ^10.0.16
   pdf_text: ^0.5.0
   get: ^4.6.5
+  pdf: ^3.9.0
+  http: ^0.13.5
 
 
 

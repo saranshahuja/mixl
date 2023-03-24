@@ -1,94 +1,107 @@
-
+import 'dart:io';
+import 'package:pdf/pdf.dart';
 import 'package:flutter/material.dart';
-import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter_tts/flutter_tts.dart';
+import 'package:pdf_text/pdf_text.dart';
 
 
 
-class PlayPage extends StatefulWidget {
-final String songName;
+class AudioPage extends StatefulWidget {
+  final String pdfUrl;
 
-PlayPage({required this.songName});
+  AudioPage({required this.pdfUrl});
 
-@override
-_PlayPageState createState() => _PlayPageState();
+  @override
+  _AudioPageState createState() => _AudioPageState();
 }
 
-class _PlayPageState extends State<PlayPage> {
- // AudioPlayer audioPlayer = AudioPlayer();
-  bool isPlaying = false;
+enum TtsState { playing, stopped }
 
+class _AudioPageState extends State<AudioPage> {
+  FlutterTts flutterTts = FlutterTts();
+  TtsState ttsState = TtsState.stopped;
+  int currentPage = 0;
+  String audioText = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _getPdfText();
+  }
+
+  Future<void> _getPdfText() async {
+    final document = await PDFDoc.fromFile(File(widget.pdfUrl));
+    final page = await document.pageAt(currentPage);
+    final text = await page.text;
+    setState(() {
+      audioText = text;
+    });
+  }
+
+  Future<void> _speak() async {
+    await flutterTts.setLanguage('en-US');
+    await flutterTts.setPitch(1);
+    await flutterTts.setSpeechRate(0.5);
+    await flutterTts.setVolume(1.0);
+    await flutterTts.awaitSpeakCompletion(true);
+    await flutterTts.speak(audioText);
+    setState(() {
+      ttsState = TtsState.playing;
+    });
+
+    await Future.delayed(Duration(seconds: audioText.length ~/ 20));
+    setState(() {
+      ttsState = TtsState.stopped;
+    });
+  }
+
+
+  Future<void> _stop() async {
+    await flutterTts.stop();
+    setState(() {
+      ttsState = TtsState.stopped;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xff2D2D2D),
-
-        title: Text(widget.songName),
+        title: Text('Audio Book'),
       ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              Container(
-                height: 300,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage('assets/album_art.jpg'),
-                    fit: BoxFit.contain,
-
-                  ),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      'Song Title',
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-
-                    Text(
-                      'Artist Name',
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        color: Colors.deepPurple,
-                      ),
-                    ),
-
-                    Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          IconButton(
-                            icon: Icon(Icons.skip_previous, color: Colors.white),
-                            onPressed: () {},
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.play_arrow, color: Colors.white, size: 48.0),
-                            onPressed: () {},
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.skip_next, color: Colors.white),
-                            onPressed: () {},
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+      body: Padding(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                child: Text(
+                  audioText,
+                  style: TextStyle(fontSize: 16),
                 ),
               ),
-            ],
-          ),
+            ),
+            SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.play_arrow),
+                  onPressed:
+                  ttsState == TtsState.stopped ? _speak : null,
+                ),
+                IconButton(
+                  icon: Icon(Icons.stop),
+                  onPressed:
+                  ttsState == TtsState.playing ? _stop : null,
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
   }
 }
+
