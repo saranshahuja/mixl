@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mixl/Pages/Admin.dart';
 import 'package:mixl/Pages/Home.dart';
+import 'package:mixl/Pages/signup.dart';
 
 
 
@@ -130,7 +131,14 @@ class _LoginPageState extends State<LoginPage> {
                       child: Text('Login'),
                     ),
                     ElevatedButton(
-                      onPressed: _login,
+                      onPressed:  () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SignupPage(),
+                          ),
+                        );
+                      },,
                       child: Text('Signup'),
                     ),
                   ],

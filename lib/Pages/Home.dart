@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:mixl/Pages/Login.dart';
 import 'package:mixl/Pages/PlayerView.dart';
 import 'package:mixl/Pages/Search.dart';
 import 'package:mixl/Pages/Settings.dart';
@@ -72,12 +74,32 @@ class _UserPageState extends State<UserPage> {
 
     await _flutterTts.speak(textContent.toString());
   }
+
+  Future<void> _signOut(BuildContext context) async {
+    try {
+      await FirebaseAuth.instance.signOut();
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => LoginPage()));
+    } catch (e) {
+      print('Error while signing out: $e');
+    }
+
+  }
+
   List<String> songs = [  'Song 1',    'Song 2',    'Song 3',    'Song 4',    'Song 5',  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('User Page'),
-          backgroundColor: Color(0xff2D2D2D)),
+          backgroundColor: Color(0xff2D2D2D),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: () => _signOut(context),
+          ),
+        ],
+      ),
       body: ListView.builder(
         shrinkWrap: true,
         itemCount: songs.length,
