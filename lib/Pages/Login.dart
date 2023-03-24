@@ -138,7 +138,7 @@ class _LoginPageState extends State<LoginPage> {
                             builder: (context) => SignupPage(),
                           ),
                         );
-                      },,
+                      },
                       child: Text('Signup'),
                     ),
                   ],
