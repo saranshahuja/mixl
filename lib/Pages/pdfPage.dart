@@ -20,12 +20,13 @@ class _PdfPageState extends State<PdfPage> {
   }
 
   Future<File> _downloadFile(String url, String filename) async {
-    final response = await FirebaseStorage.instance.ref().child(url).getData();
+    final ref = FirebaseStorage.instance.ref().child(url);
     final directory = await getApplicationDocumentsDirectory();
     final filePath = '${directory.path}/$filename';
     final file = File(filePath);
-    await file.writeAsBytes(response as List<int>);
+    await ref.writeToFile(file);
     return file;
+  }
   }
 
   Future<void> _loadPdfFiles() async {
