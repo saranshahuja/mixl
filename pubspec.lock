@@ -326,6 +326,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.1"
+  flutter_pdfview:
+    dependency: "direct main"
+    description:
+      name: flutter_pdfview
+      sha256: "1a0e065689f2e0f4a795aef8ddfc3bb40387f24333290b62b4d3f1dfd6bef5fa"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.9"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -508,10 +516,10 @@ packages:
     dependency: "direct main"
     description:
       name: pdf
-      sha256: "6cd57e8e6d052bd1078f18e0dc7cd6701fad6288231c1ce99d66ef5034d14e61"
+      sha256: "0e41fae3c0d7674ec2d76831f5c582158a018f0ef054f4bea399dab78f78db1b"
       url: "https://pub.dev"
     source: hosted
-    version: "3.9.0"
+    version: "3.10.0"
   pdf_render:
     dependency: "direct main"
     description:

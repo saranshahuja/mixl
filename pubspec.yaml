@@ -51,6 +51,7 @@ dependencies:
   get: ^4.6.5
   pdf: ^3.9.0
   http: ^0.13.5
+  flutter_pdfview: ^1.2.9
 
 
 
