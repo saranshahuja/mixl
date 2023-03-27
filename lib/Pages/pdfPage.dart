@@ -1,5 +1,6 @@
 import 'dart:io';
-import 'package:path/path.dart' as path;
+import 'package:path/path.dart';
+
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
@@ -20,13 +21,12 @@ class _PdfPageState extends State<PdfPage> {
   }
 
   Future<File> _downloadFile(String url, String filename) async {
-    final ref = FirebaseStorage.instance.ref().child(url);
+    final response = await FirebaseStorage.instance.ref(url).getData();
     final directory = await getApplicationDocumentsDirectory();
     final filePath = '${directory.path}/$filename';
     final file = File(filePath);
-    await ref.writeToFile(file);
+    await file.writeAsBytes(response!);
     return file;
-  }
   }
 
   Future<void> _loadPdfFiles() async {
@@ -35,18 +35,14 @@ class _PdfPageState extends State<PdfPage> {
 
     for (final ref in references) {
       if (ref.name.endsWith('.pdf')) {
-        final url = await ref.getDownloadURL();
+        final url = ref.fullPath;
         final filename = ref.name;
         final file = await _downloadFile(url, filename);
         _pdfFiles.add(file.path);
       }
     }
 
-    print('PDF files loaded successfully: $_pdfFiles');
-
-    setState(() {
-      var _isLoading = false;
-    });
+    setState(() {});
   }
 
   @override
@@ -61,7 +57,7 @@ class _PdfPageState extends State<PdfPage> {
         itemCount: _pdfFiles.length,
         itemBuilder: (context, index) {
           final file = File(_pdfFiles[index]);
-          final filename = path.basename(file.path);
+          final filename = basename(file.path);
           return ListTile(
             title: Text(filename),
             onTap: () => Navigator.push(
