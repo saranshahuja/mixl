@@ -1,103 +1,111 @@
-import 'dart:io';
-import 'package:path/path.dart';
-
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
-
-class PdfPage extends StatefulWidget {
-  @override
-  _PdfPageState createState() => _PdfPageState();
-}
-
-class _PdfPageState extends State<PdfPage> {
-  List<String> _pdfFiles = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _loadPdfFiles();
-  }
-
-  Future<File> _downloadFile(String url, String filename) async {
-    final response = await FirebaseStorage.instance.ref(url).getData();
-    final directory = await getApplicationDocumentsDirectory();
-    final filePath = '${directory.path}/$filename';
-    final file = File(filePath);
-    await file.writeAsBytes(response!);
-    return file;
-  }
-
-  Future<void> _loadPdfFiles() async {
-    final ListResult result = await FirebaseStorage.instance.ref().listAll();
-    final List<Reference> references = result.items;
-
-    for (final ref in references) {
-      if (ref.name.endsWith('.pdf')) {
-        final url = ref.fullPath;
-        final filename = ref.name;
-        final file = await _downloadFile(url, filename);
-        _pdfFiles.add(file.path);
-      }
-    }
-
-    setState(() {});
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('PDF Files'),
-      ),
-      body: _pdfFiles.isEmpty
-          ? Center(child: CircularProgressIndicator())
-          : ListView.builder(
-        itemCount: _pdfFiles.length,
-        itemBuilder: (context, index) {
-          final file = File(_pdfFiles[index]);
-          final filename = basename(file.path);
-          return ListTile(
-            title: Text(filename),
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => PdfViewPage(pdfUrl: file.path),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
 
 class PdfViewPage extends StatefulWidget {
   final String pdfUrl;
+  final String pdfName;
+  final void Function(int, int)? onPageChanged;
 
-  PdfViewPage({required this.pdfUrl});
+  const PdfViewPage({
+    Key? key,
+    required this.pdfUrl,
+    required this.pdfName,
+    this.onPageChanged,
+  }) : super(key: key);
 
   @override
   _PdfViewPageState createState() => _PdfViewPageState();
 }
 
 class _PdfViewPageState extends State<PdfViewPage> {
-  late PDFViewController _pdfViewController;
+  bool _isLoading = true;
+  int _currentPage = 0;
+  int _totalPages = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('PDF Viewer'),
+        title: Text(widget.pdfName),
       ),
-      body: PDFView(
-        filePath: widget.pdfUrl,
-        onRender: (pages) => print('$pages pages rendered'),
-        onViewCreated: (PDFViewController pdfViewController) {
-          _pdfViewController = pdfViewController;
-        },
+      body: Stack(
+        children: [
+          PDFView(
+            filePath: widget.pdfUrl,
+            onPageChanged: (page, total) {
+              setState(() {
+                _totalPages = total!;
+                _currentPage = page!;
+              });
+              if (widget.onPageChanged != null) {
+                widget.onPageChanged!(page!, total!);
+              }
+            },
+            onError: (error) {
+              print(error.toString());
+            },
+            onRender: (_pages) {
+              setState(() {
+                _isLoading = false;
+                _totalPages = _pages!;
+              });
+            },
+          ),
+          _isLoading
+              ? Center(
+            child: CircularProgressIndicator(),
+          )
+              : Container(),
+        ],
+      ),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            child: Icon(Icons.arrow_upward),
+            onPressed: () {
+              if (_currentPage > 0) {
+                setState(() {
+                  _isLoading = true;
+                  _currentPage -= 1;
+                });
+                _pageController.animateToPage(
+                  _currentPage,
+                  duration: Duration(milliseconds: 250),
+                  curve: Curves.easeInOut,
+                );
+              }
+            },
+          ),
+          SizedBox(height: 16),
+          Text('${_currentPage + 1}/$_totalPages'),
+          SizedBox(height: 16),
+          FloatingActionButton(
+            child: Icon(Icons.arrow_downward),
+            onPressed: () {
+              if (_currentPage < _totalPages - 1) {
+                setState(() {
+                  _isLoading = true;
+                  _currentPage += 1;
+                });
+                _pageController.animateToPage(
+                  _currentPage,
+                  duration: Duration(milliseconds: 250),
+                  curve: Curves.easeInOut,
+                );
+              }
+            },
+          ),
+        ],
       ),
     );
+  }
+
+  final _pageController = PageController();
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 }
