@@ -1,7 +1,10 @@
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:mixl/Pages/Home.dart';
 import 'package:mixl/Pages/PlayerView.dart';
+import 'package:mixl/Pages/Search.dart';
+import 'package:mixl/Pages/Settings.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:http/http.dart' as http;
@@ -17,6 +20,7 @@ class UserPage extends StatefulWidget {
 class _UserPageState extends State<UserPage> {
   List<String> _pdfFiles = [];
   FlutterTts flutterTts = FlutterTts();
+  int _selectedIndex = 0;
 
   @override
   void initState() {
@@ -32,6 +36,14 @@ class _UserPageState extends State<UserPage> {
     await file.writeAsBytes(response.bodyBytes);
     return file;
   }
+
+  static const List<Widget> _widgetOptions = <Widget>[
+
+    KeywordSearchPage(),
+    UserSettingsPage(),
+
+  ];
+
 
   Future<void> _loadPdfFiles() async {
     final ListResult result = await FirebaseStorage.instance.ref().listAll();
@@ -53,6 +65,12 @@ class _UserPageState extends State<UserPage> {
 
 
 
+  void _onItemTapped(BuildContext context, int index) {
+      setState(() {
+        _selectedIndex = index;
+      });
+
+  }
 
 
 
@@ -66,7 +84,6 @@ class _UserPageState extends State<UserPage> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-
           Expanded(
             child: ListView.builder(
               itemCount: _pdfFiles.length,
@@ -84,9 +101,27 @@ class _UserPageState extends State<UserPage> {
                 );
               },
             ),
-
           ),
         ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'Search',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Profile',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.deepPurple,
+        onTap: (index) => _onItemTapped(context, index),
       ),
     );
   }

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:mixl/Pages/Admin.dart';
 import 'package:mixl/Pages/Home.dart';
 import 'package:mixl/Pages/Login.dart';
+import 'package:mixl/Pages/Search.dart';
+import 'package:mixl/Pages/Settings.dart';
 import 'package:mixl/Pages/pdfPage.dart';
 import 'package:mixl/Pages/signup.dart';
 
@@ -11,6 +13,8 @@ import 'package:firebase_core/firebase_core.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  final content = await loadPadFile('lib/assets/Test.txt');
+  print(content);
   await Firebase.initializeApp();
   runApp(const MyApp());
 }
@@ -54,6 +58,7 @@ class MyApp extends StatelessWidget {
         ),
 
       home: pdfpage(),
+
     );
   }
 }

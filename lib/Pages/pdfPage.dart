@@ -19,7 +19,7 @@ Future<void> requestStoragePermission() async {
 Future<String?> loadPadFile(String fileName) async {
   String? contents;
   try {
-    contents = await rootBundle.loadString('assets/$fileName');
+    contents = await rootBundle.loadString('$fileName');
   } catch (e) {
     print('Error loading the file: $e');
   }
@@ -37,6 +37,9 @@ void speak(String text) async {
 }
 
 
+
+
+
 class pdfpage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -46,7 +49,7 @@ class pdfpage extends StatelessWidget {
         body: Center(
           child: ElevatedButton(
             onPressed: () async {
-              String? contents = await loadPadFile('Test.txt');
+              String? contents = await loadPadFile('lib/assets/Test.txt');
               if (contents != null) {
                 speak(contents);
               }
