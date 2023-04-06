@@ -1,111 +1,61 @@
+import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_pdfview/flutter_pdfview.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_tts/flutter_tts.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
-class PdfViewPage extends StatefulWidget {
-  final String pdfUrl;
-  final String pdfName;
-  final void Function(int, int)? onPageChanged;
 
-  const PdfViewPage({
-    Key? key,
-    required this.pdfUrl,
-    required this.pdfName,
-    this.onPageChanged,
-  }) : super(key: key);
-
-  @override
-  _PdfViewPageState createState() => _PdfViewPageState();
+Future<void> requestStoragePermission() async {
+  if (await Permission.storage.request().isGranted) {
+    print('Storage permission granted.');
+  } else {
+    print('Storage permission denied.');
+  }
 }
 
-class _PdfViewPageState extends State<PdfViewPage> {
-  bool _isLoading = true;
-  int _currentPage = 0;
-  int _totalPages = 0;
 
+Future<String?> loadPadFile(String fileName) async {
+  String? contents;
+  try {
+    contents = await rootBundle.loadString('assets/$fileName');
+  } catch (e) {
+    print('Error loading the file: $e');
+  }
+  return contents;
+}
+
+
+FlutterTts flutterTts = FlutterTts();
+
+void speak(String text) async {
+  await flutterTts.setLanguage('en-US');
+  await flutterTts.setPitch(1.0);
+  await flutterTts.setSpeechRate(0.5);
+  await flutterTts.speak(text);
+}
+
+
+class pdfpage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.pdfName),
-      ),
-      body: Stack(
-        children: [
-          PDFView(
-            filePath: widget.pdfUrl,
-            onPageChanged: (page, total) {
-              setState(() {
-                _totalPages = total!;
-                _currentPage = page!;
-              });
-              if (widget.onPageChanged != null) {
-                widget.onPageChanged!(page!, total!);
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text('Text-to-Speech')),
+        body: Center(
+          child: ElevatedButton(
+            onPressed: () async {
+              String? contents = await loadPadFile('Test.txt');
+              if (contents != null) {
+                speak(contents);
               }
             },
-            onError: (error) {
-              print(error.toString());
-            },
-            onRender: (_pages) {
-              setState(() {
-                _isLoading = false;
-                _totalPages = _pages!;
-              });
-            },
+            child: Text('Speak file contents'),
           ),
-          _isLoading
-              ? Center(
-            child: CircularProgressIndicator(),
-          )
-              : Container(),
-        ],
-      ),
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          FloatingActionButton(
-            child: Icon(Icons.arrow_upward),
-            onPressed: () {
-              if (_currentPage > 0) {
-                setState(() {
-                  _isLoading = true;
-                  _currentPage -= 1;
-                });
-                _pageController.animateToPage(
-                  _currentPage,
-                  duration: Duration(milliseconds: 250),
-                  curve: Curves.easeInOut,
-                );
-              }
-            },
-          ),
-          SizedBox(height: 16),
-          Text('${_currentPage + 1}/$_totalPages'),
-          SizedBox(height: 16),
-          FloatingActionButton(
-            child: Icon(Icons.arrow_downward),
-            onPressed: () {
-              if (_currentPage < _totalPages - 1) {
-                setState(() {
-                  _isLoading = true;
-                  _currentPage += 1;
-                });
-                _pageController.animateToPage(
-                  _currentPage,
-                  duration: Duration(milliseconds: 250),
-                  curve: Curves.easeInOut,
-                );
-              }
-            },
-          ),
-        ],
+        ),
       ),
     );
   }
-
-  final _pageController = PageController();
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
 }
+

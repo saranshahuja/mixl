@@ -53,7 +53,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
 
-      home: PdfViewPage(pdfUrl: 'gs://mixl-8e216.appspot.com/', pdfName: 'test',),
+      home: pdfpage(),
     );
   }
 }

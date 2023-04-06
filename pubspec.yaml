@@ -49,9 +49,11 @@ dependencies:
   firebase_database: ^10.0.16
   pdf_text: ^0.5.0
   get: ^4.6.5
-  pdf: ^3.9.0
+  pdf: ^3.10.1
   http: ^0.13.5
   flutter_pdfview: ^1.2.9
+  flutter_cached_pdfview: ^0.4.1
+  permission_handler: ^10.2.0
 
 
 

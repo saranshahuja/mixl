@@ -39,7 +39,7 @@ class _UserPageState extends State<UserPage> {
 
     for (final ref in references) {
       if (ref.name.endsWith('.pdf')) {
-        final url = await ref.getDownloadURL();
+        final url = 'gs://mixl-8e216.appspot.com';
         final filename = ref.name;
         final file = await _downloadFile(url, filename);
         _pdfFiles.add(file.path);
