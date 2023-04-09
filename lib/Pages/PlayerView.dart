@@ -1,102 +1,71 @@
 import 'dart:io';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:pdf/pdf.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:pdf_text/pdf_text.dart';
 
-
-
 class AudioPage extends StatefulWidget {
-  final String pdfUrl;
+  final String filePath;
 
-  AudioPage({required this.pdfUrl});
+  const AudioPage({Key? key, required this.filePath}) : super(key: key);
 
   @override
   _AudioPageState createState() => _AudioPageState();
 }
 
-enum TtsState { playing, stopped }
-
 class _AudioPageState extends State<AudioPage> {
-  FlutterTts flutterTts = FlutterTts();
-  TtsState ttsState = TtsState.stopped;
-  int currentPage = 0;
-  String audioText = '';
+  late FlutterTts flutterTts;
+  late String _text;
+  bool _isPlaying = false;
 
   @override
   void initState() {
     super.initState();
-    _getPdfText();
+    flutterTts = FlutterTts();
+    _loadText();
   }
 
-  Future<void> _getPdfText() async {
-    final document = await PDFDoc.fromFile(File(widget.pdfUrl));
-    final page = await document.pageAt(currentPage);
-    final text = await page.text;
-    setState(() {
-      audioText = text;
-    });
+  Future<void> _loadText() async {
+    final file = File(widget.filePath);
+    _text = await file.readAsString();
   }
 
-  Future<void> _speak() async {
-    await flutterTts.setLanguage('en-US');
-    await flutterTts.setPitch(1);
-    await flutterTts.setSpeechRate(0.5);
-    await flutterTts.setVolume(1.0);
-    await flutterTts.awaitSpeakCompletion(true);
-    await flutterTts.speak(audioText);
+  Future<void> _toggleAudio() async {
+    if (_isPlaying) {
+      await flutterTts.stop();
+    } else {
+      await flutterTts.speak(_text);
+    }
     setState(() {
-      ttsState = TtsState.playing;
-    });
-
-    await Future.delayed(Duration(seconds: audioText.length ~/ 20));
-    setState(() {
-      ttsState = TtsState.stopped;
+      _isPlaying = !_isPlaying;
     });
   }
 
-
-  Future<void> _stop() async {
-    await flutterTts.stop();
-    setState(() {
-      ttsState = TtsState.stopped;
-    });
+  @override
+  void dispose() {
+    flutterTts.stop();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Audio Book'),
+        title: Text('Audio'),
       ),
-      body: Padding(
-        padding: EdgeInsets.all(16),
+      body: Center(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Expanded(
-              child: SingleChildScrollView(
-                child: Text(
-                  audioText,
-                  style: TextStyle(fontSize: 16),
-                ),
-              ),
+            IconButton(
+              icon: Icon(_isPlaying ? Icons.stop : Icons.play_arrow),
+              iconSize: 64,
+              onPressed: _toggleAudio,
             ),
-            SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
-                  icon: Icon(Icons.play_arrow),
-                  onPressed:
-                  ttsState == TtsState.stopped ? _speak : null,
-                ),
-                IconButton(
-                  icon: Icon(Icons.stop),
-                  onPressed:
-                  ttsState == TtsState.playing ? _stop : null,
-                ),
-              ],
+            Text(
+              _isPlaying ? 'Playing' : 'Stopped',
+              style: TextStyle(fontSize: 24),
             ),
           ],
         ),
@@ -104,4 +73,3 @@ class _AudioPageState extends State<AudioPage> {
     );
   }
 }
-
