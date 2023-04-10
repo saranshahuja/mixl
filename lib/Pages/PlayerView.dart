@@ -45,7 +45,9 @@ class _MyAudioPage extends State<AudioPage> {
         body: Container(
           margin: const EdgeInsets.only(top: 20),
           child: Center(
-            child: Column(children: [
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -160,42 +162,6 @@ class _MyAudioPage extends State<AudioPage> {
                   ],
                 ),
               ),
-              if (languages != null)
-                Container(
-                  margin: const EdgeInsets.only(left: 10),
-                  child: Row(
-                    children: [
-                      const Text(
-                        "Language :",
-                        style: TextStyle(fontSize: 17),
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      DropdownButton<String>(
-                        focusColor: Colors.white,
-                        value: langCode,
-                        style: const TextStyle(color: Colors.white),
-                        iconEnabledColor: Colors.white,
-                        items: languages!
-                            .map<DropdownMenuItem<String>>((String? value) {
-                          return DropdownMenuItem<String>(
-                            value: value!,
-                            child: Text(
-                              value,
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                          );
-                        }).toList(),
-                        onChanged: (String? value) {
-                          setState(() {
-                            langCode = value!;
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                )
             ]),
           ),
         ));
