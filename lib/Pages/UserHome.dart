@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mixl/Pages/PlayerView.dart';
@@ -13,7 +12,6 @@ class UserHome extends StatefulWidget {
 
 class _UserHomeState extends State<UserHome> {
 
-   List<String> _fileNames = ['Test.txt'];
 
   Future<String> _loadFileContents(String fileName) async {
     // Load the file contents for the given file name
@@ -55,7 +53,7 @@ class _UserHomeState extends State<UserHome> {
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => AudioPage( filePath: 'lib/assets/Test.txt',),
+                      builder: (context) => const AudioPage(),
                     ),
                   ),
                 )
