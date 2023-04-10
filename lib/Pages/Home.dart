@@ -51,10 +51,13 @@ class _UserPageState extends State<UserPage> {
 
 
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: const Color(0xff2D2D2D),
+
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
+
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.search),
@@ -66,6 +69,7 @@ class _UserPageState extends State<UserPage> {
           ),
         ],
         currentIndex: _selectedIndex,
+        unselectedItemColor: Colors.white,
         selectedItemColor: Colors.deepPurple,
         onTap: (index) => _onItemTapped(index),
       ),
