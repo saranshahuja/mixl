@@ -1,5 +1,7 @@
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:mixl/Pages/Login.dart';
 
 class KeywordSearchPage extends StatefulWidget {
   const KeywordSearchPage({Key? key}) : super(key: key);
@@ -23,6 +25,17 @@ class _KeywordSearchPageState extends State<KeywordSearchPage> {
       _searchKeyword = _searchController.text;
     });
   }
+  Future<void> _signOut(BuildContext context) async {
+    try {
+      await FirebaseAuth.instance.signOut();
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => LoginPage()));
+    } catch (e) {
+      print('Error while signing out: $e');
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +43,12 @@ class _KeywordSearchPageState extends State<KeywordSearchPage> {
       appBar: AppBar(
         title: const Text('Search'),
           backgroundColor: Color(0xff2D2D2D),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: () => _signOut(context),
+          ),
+        ],
 
       ),
       body: Column(
