@@ -1,9 +1,12 @@
+import 'dart:ffi';
 import 'dart:io';
 
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:mixl/Pages/pdfPage.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:pdf_text/pdf_text.dart';
 
 
 
@@ -57,7 +60,7 @@ class _MyAudioPage extends State<AudioPage> {
                   ),
                   ElevatedButton(
                     child: const Text("Speak"),
-                    onPressed: _speak,
+                    onPressed: extractPdfText,//_speak,
                   ),
                   const SizedBox(
                     width: 10,
@@ -193,6 +196,49 @@ class _MyAudioPage extends State<AudioPage> {
     String fileContent = await readTextFromFile(contents!);
     await flutterTts.speak(contents);
   }
+
+
+  Future<File> downloadPdfFromFirebaseStorage(String pdfUrl) async {
+    // Create a Reference to the PDF file
+    Reference reference = FirebaseStorage.instance.refFromURL(pdfUrl);
+
+    // Get the application documents directory
+    Directory appDocDir = await getApplicationDocumentsDirectory();
+    File localFile = File('${appDocDir.path}/downloaded_pdf.pdf');
+
+    // Download the PDF file and save it locally
+    await reference.writeToFile(localFile);
+
+    return localFile;
+  }
+
+
+  Future<String> extractTextFromPdf(File pdfFile) async {
+    // Create a PDFDoc instance from the file
+    PDFDoc pdfDoc = await PDFDoc.fromFile(pdfFile);
+
+    // Extract text from all pages
+    String pdfText = '';
+    List<PDFPage> pages = await pdfDoc.pages;
+    for (PDFPage page in pages) {
+      String pageText = await page.text;
+      pdfText += pageText;
+    }
+
+    return pdfText;
+  }
+
+
+ void extractPdfText() async {
+    String pdfUrl = 'https://firebasestorage.googleapis.com/v0/b/mixl-8e216.appspot.com/o/Test.pdf?alt=media&token=9cfcc809-337e-4e2b-94a8-825edf46923d';
+    File downloadedPdf = await downloadPdfFromFirebaseStorage(pdfUrl);
+    String pdfText = await extractTextFromPdf(downloadedPdf);
+    print(pdfText);
+    await flutterTts.speak(pdfText);
+  }
+
+
+
 
   void _stop() async {
     await flutterTts.stop();
