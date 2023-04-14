@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:mixl/Pages/pdfPage.dart';
 import 'package:path_provider/path_provider.dart';
 
 
@@ -188,9 +189,9 @@ class _MyAudioPage extends State<AudioPage> {
   }
   void _speak() async {
     initSetting();
-    String fileName = 'lib/assets/Test.txt';
-    String fileContent = await readTextFromFile(fileName);
-    await flutterTts.speak(fileContent);
+    String? contents = await loadPadFile('lib/assets/Test.txt');
+    String fileContent = await readTextFromFile(contents!);
+    await flutterTts.speak(contents);
   }
 
   void _stop() async {
