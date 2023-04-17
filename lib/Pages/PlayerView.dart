@@ -1,17 +1,19 @@
 import 'dart:ffi';
 import 'dart:io';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:mixl/Pages/pdfPage.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf_text/pdf_text.dart';
 
 
 
 class AudioPage extends StatefulWidget {
-  const AudioPage({Key? key}) : super(key: key);
+  final String fileUrl;
+
+  const AudioPage({Key? key, required this.fileUrl,}) : super(key: key);
 
   @override
   State<AudioPage> createState() => _MyAudioPage();
@@ -26,6 +28,13 @@ class _MyAudioPage extends State<AudioPage> {
   double speechRate = 0.5;
   List<String>? languages;
   String langCode = "en-US";
+
+
+
+  PlayerState audioPlayerState = PlayerState.stopped;
+  PlayerState? audioPlayer;
+  Duration? duration;
+  Duration? position;
 
   @override
   void initState() {
@@ -190,12 +199,7 @@ class _MyAudioPage extends State<AudioPage> {
       return '';
     }
   }
-  void _speak() async {
-    initSetting();
-    String? contents = await loadPadFile('lib/assets/Test.txt');
-    String fileContent = await readTextFromFile(contents!);
-    await flutterTts.speak(contents);
-  }
+
 
 
   Future<File> downloadPdfFromFirebaseStorage(String pdfUrl) async {

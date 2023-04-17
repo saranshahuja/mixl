@@ -3,7 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mixl/Pages/PlayerView.dart';
-
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'Login.dart';
 
 
@@ -21,6 +22,28 @@ class _UserHomeState extends State<UserHome> {
     final file = await File(fileName).readAsString();
     return file;
   }
+
+
+  Future<List<String>> _getItems() async {
+    List<String> itemList = [];
+
+    // Retrieve the reference to the folder where the files are stored
+    final folderRef = FirebaseStorage.instance.ref().child('gs://mixl-8e216.appspot.com');
+
+    // Get the list of items
+    final result = await folderRef.listAll();
+
+    // Get the download URL for each item and add it to the itemList
+    for (var item in result.items) {
+      final url = await item.getDownloadURL();
+      itemList.add(url);
+    }
+
+    return itemList;
+  }
+
+
+
 
 
   Future<void> _signOut(BuildContext context) async {
@@ -48,49 +71,49 @@ class _UserHomeState extends State<UserHome> {
           ),
         ],
       ),
-      body: Column(
-
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-
-          ListView(
-            shrinkWrap: true,
-            padding: EdgeInsets.all(5),
-            children: [
-
-              Container(
-
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.deepPurple,
-                    width: 1,
+      body:FutureBuilder(
+        future: _getItems(),
+        builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else {
+            return ListView.builder(
+              itemCount: snapshot.data?.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.deepPurple,
+                      width: 1,
+                    ),
+                    borderRadius: BorderRadius.circular(5),
+                    color: Colors.black12,
                   ),
-                  borderRadius: BorderRadius.circular(5),
-                  color: Colors.black12,
-    ),
-                child: ListTile(
-                  hoverColor: Colors.deepPurple,
-                  title: Text('Test.txt',style: TextStyle(color: Colors.white),),
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const AudioPage(),
+                  child: ListTile(
+                    hoverColor: Colors.deepPurple,
+                    title: Text(
+                      'Item ${index + 1}',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AudioPage(fileUrl: snapshot.data![index]),
+                      ),
                     ),
                   ),
-                )
-
-
-
-                ),
-
-    //           ListTile(
-    //             title: Text('Change Email',style: TextStyle(color: Colors.white),),
-    // )
-
-            ],
-          ),
-        ],
+                );
+              },
+            );
+          }
+        },
       ),
+
+
+
+
     );
 
 

@@ -1,20 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:mixl/Pages/Admin.dart';
 import 'package:mixl/Pages/Home.dart';
 import 'package:mixl/Pages/Login.dart';
-import 'package:mixl/Pages/Search.dart';
-import 'package:mixl/Pages/Settings.dart';
-import 'package:mixl/Pages/pdfPage.dart';
-import 'package:mixl/Pages/signup.dart';
 
-
-import '../widgets/theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final content = await loadPadFile('lib/assets/Test.txt');
-  print(content);
   await Firebase.initializeApp();
   runApp(const MyApp());
 }
@@ -31,13 +22,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: Colors.white,
         accentColor: Colors.deepPurpleAccent,
-        scaffoldBackgroundColor: Colors.black, // Set the default Scaffold background color to black
-        textTheme: TextTheme(
-          bodyText1: TextStyle(color: Colors.white), // Set default text color to white
-          bodyText2: TextStyle(color: Colors.white), // Set default text color to white
-          button: TextStyle(color: Colors.white),
-          // Set button text color to white
-        ),
+        scaffoldBackgroundColor: Colors.white, // Set the default Scaffold background color to black
+
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
             primary: Colors.deepPurple,
