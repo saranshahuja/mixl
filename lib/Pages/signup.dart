@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:mixl/Pages/Admin.dart';
-import 'package:mixl/Pages/Home.dart';
-import 'package:mixl/Pages/Login.dart';
+import 'package:mixl/Pages/UserHome.dart';
+import 'Login.dart';
+import 'Home.dart';
 
 class SignupPage extends StatefulWidget {
   @override
@@ -14,12 +14,15 @@ class _SignupPageState extends State<SignupPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
   bool _isAdmin = false;
+  bool _termsChecked = false;
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -38,7 +41,7 @@ class _SignupPageState extends State<SignupPage> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => _isAdmin ? AdminPage() : UserPage(),
+            builder: (context) => UserHome(),
           ),
         );
       } catch (e) {
@@ -67,79 +70,105 @@ class _SignupPageState extends State<SignupPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                Image.asset('lib/assets/Avatar.png', width: 250, height: 250),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    controller: _emailController,
-                    decoration: InputDecoration(labelText: 'Email'),
-                    keyboardType: TextInputType.emailAddress,
-                    validator: (value) {
-                      if (value!.isEmpty || !value.contains('@')) {
-                        return 'Please enter a valid email';
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    controller: _passwordController,
-                    decoration: InputDecoration(labelText: 'Password'),
-                    obscureText: true,
-                    validator: (value) {
-                      if (value!.isEmpty || value.length < 6) {
-                        return 'Please enter a valid password (at least 6 characters)';
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Checkbox(
-                      hoverColor: Colors.white,
-                      value: _isAdmin,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          _isAdmin = value!;
-                        });
-                      },
-                    ),
-                    Text('Register as Admin'),
-                  ],
-                ),
-                SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: _signup,
-                  child: Text('Sign Up'),
-                ),
-                TextButton(onPressed: () {
-                  Navigator.pop(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => LoginPage(),
-                    ),
-                  );
-                },
-
-
-                    child: Text('Go back to login', style: TextStyle(color: Colors.white),))
-              ],
-            ),
-          ),
-        ],
+        backgroundColor: Colors.white, // set background color to white
+        appBar: AppBar(
+        title: Text('Sign Up'),
+    ),
+    body: SingleChildScrollView(
+    child: Container(
+    margin: EdgeInsets.all(16.0),
+    child: Form(
+    key: _formKey,
+    child: Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+    SizedBox(height: 16.0),
+    TextFormField(
+    controller: _emailController,
+    decoration: InputDecoration(
+    labelText: 'Email',
+    hintText: 'Enter your email address',
+    ),
+    keyboardType: TextInputType.emailAddress,
+    validator: (value) {
+    if (value!.isEmpty || !value.contains('@')) {
+    return 'Please enter a valid email';
+    }
+    return null;
+    },
+    ),
+    SizedBox(height: 16.0),
+    TextFormField(
+    controller: _passwordController,
+    decoration: InputDecoration(
+    labelText: 'Password',
+    hintText: 'Enter a password',
+    ),
+    obscureText: true,
+    validator: (value) {
+    if (value!.isEmpty || value.length < 6) {
+    return 'Please enter a valid password (at least 6 characters)';
+    }
+    return null;
+    },
+    ),
+    SizedBox(height: 16.0),
+    TextFormField(
+    controller: _confirmPasswordController,
+    decoration: InputDecoration(
+    labelText: 'Confirm Password',
+    hintText: 'Confirm your password',
+    ),
+    obscureText: true,
+    validator: (value) {
+    if (value!.isEmpty || value != _passwordController.text) {
+    return 'Passwords do not match';
+    }
+    return null;
+    },
+    ),
+      SizedBox(height: 16.0),
+      CheckboxListTile(
+        title: Text('Are you an admin?'),
+        value: _isAdmin,
+        onChanged: (bool? value) {
+          setState(() {
+            _isAdmin = value!;
+          });
+        },
       ),
+      SizedBox(height: 16.0),
+      CheckboxListTile(
+        title: Text('I agree to the terms and conditions'),
+        value: _termsChecked,
+        onChanged: (bool? value) {
+          setState(() {
+            _termsChecked = value!;
+          });
+        },
+      ),
+      SizedBox(height: 16.0),
+      ElevatedButton(
+        onPressed: _signup,
+        child: Text('Sign Up'),
+      ),
+      SizedBox(height: 16.0),
+      TextButton(
+        onPressed: () {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => LoginPage(),
+            ),
+          );
+        },
+        child: Text('Already have an account? Log in'),
+      ),
+    ],
+    ),
+    ),
+    ),
+    ),
     );
   }
 }
