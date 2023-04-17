@@ -71,47 +71,6 @@ class _UserHomeState extends State<UserHome> {
           ),
         ],
       ),
-      body:FutureBuilder(
-        future: _getItems(),
-        builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else {
-            return ListView.builder(
-              itemCount: snapshot.data?.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Colors.deepPurple,
-                      width: 1,
-                    ),
-                    borderRadius: BorderRadius.circular(5),
-                    color: Colors.black12,
-                  ),
-                  child: ListTile(
-                    hoverColor: Colors.deepPurple,
-                    title: Text(
-                      'Item ${index + 1}',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AudioPage(fileUrl: snapshot.data![index]),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            );
-          }
-        },
-      ),
-
-
 
 
     );
