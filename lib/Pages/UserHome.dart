@@ -102,16 +102,22 @@ class _UserHomeState extends State<UserHome> {
               itemBuilder: (BuildContext context, int index) {
                 String fileName = snapshot.data![index]['name']!;
                 String fileUrl = snapshot.data![index]['url']!;
-                return ListTile(
-                  title: Text(fileName),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AudioPage(fileUrl: fileUrl, filename: fileName),
-                      ),
-                    );
-                  },
+                return Card(
+                  borderOnForeground: true,
+                  elevation: 10,
+                  color: Colors.white,
+
+                  child: ListTile(
+                    title: Text(fileName),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AudioPage(fileUrl: fileUrl, filename: fileName),
+                        ),
+                      );
+                    },
+                  ),
                 );
               },
             );

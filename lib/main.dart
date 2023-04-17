@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Mixl',
       theme: ThemeData(
-        primaryColor: Colors.white,
+        primaryColor: Colors.white70,
         accentColor: Colors.deepPurpleAccent,
         scaffoldBackgroundColor: Colors.white, // Set the default Scaffold background color to black
 
