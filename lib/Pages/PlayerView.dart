@@ -12,8 +12,9 @@ import 'package:pdf_text/pdf_text.dart';
 
 class AudioPage extends StatefulWidget {
   final String fileUrl;
+  final String filename;
 
-  const AudioPage({Key? key, required this.fileUrl,}) : super(key: key);
+  const AudioPage({Key? key, required this.fileUrl, required this.filename,}) : super(key: key);
 
   @override
   State<AudioPage> createState() => _MyAudioPage();
@@ -52,7 +53,7 @@ class _MyAudioPage extends State<AudioPage> {
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: const Text("Test.txt"),
+          title: Text(widget.filename),
           backgroundColor: Color(0xff2D2D2D),
         ),
         body: Container(
@@ -231,14 +232,26 @@ class _MyAudioPage extends State<AudioPage> {
 
     return pdfText;
   }
+  Future<File> downloadFileFromUrl(String fileUrl) async {
+    // Create a Reference to the file
+    Reference reference = FirebaseStorage.instance.refFromURL(fileUrl);
 
+    // Get the application documents directory
+    Directory appDocDir = await getApplicationDocumentsDirectory();
+    String fileName = reference.name;
+    File localFile = File('${appDocDir.path}/$fileName');
+
+    // Download the file and save it locally
+    await reference.writeToFile(localFile);
+
+    return localFile;
+  }
 
  void extractPdfText() async {
-    String pdfUrl = 'https://firebasestorage.googleapis.com/v0/b/mixl-8e216.appspot.com/o/Test.pdf?alt=media&token=9cfcc809-337e-4e2b-94a8-825edf46923d';
-    File downloadedPdf = await downloadPdfFromFirebaseStorage(pdfUrl);
-    String pdfText = await extractTextFromPdf(downloadedPdf);
-    print(pdfText);
-    await flutterTts.speak(pdfText);
+   File downloadedPdf = await downloadPdfFromFirebaseStorage(widget.fileUrl);
+   String pdfText = await extractTextFromPdf(downloadedPdf);
+   print(pdfText);
+   await flutterTts.speak(pdfText);
   }
 
 

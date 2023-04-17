@@ -45,19 +45,25 @@ class _UserHomeState extends State<UserHome> {
 
 
 
+  Future<List<Map<String, String>>> _fetchFileUrls() async {
+    List<Map<String, String>> fileData = [];
 
-  Future<List<String>> fetchFileList() async {
-    List<String> fileList = [];
+    // Fetch files from the root directory
+    final rootReference = FirebaseStorage.instance.ref();
+    final result = await rootReference.list();
 
-    // Replace 'your-path' with the actual path where your files are stored in Firebase Storage
-    final firebaseStorageRef = FirebaseStorage.instance.ref('');
-    final result = await firebaseStorageRef.list();
     for (var item in result.items) {
-      fileList.add(item.fullPath);
+      String url = await item.getDownloadURL();
+      String name = item.name;
+      fileData.add({
+        'url': url,
+        'name': name,
+      });
     }
-    print(fileList.length);
-    return fileList;
+
+    return fileData;
   }
+
 
 
 
@@ -86,38 +92,34 @@ class _UserHomeState extends State<UserHome> {
           ),
         ],
       ),
-    body: FutureBuilder<List<String>>(
-      future: fetchFileList(),
-      builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else {
-          return ListView.builder(
-            itemCount: snapshot.data!.length,
-            itemBuilder: (BuildContext context, int index) {
-              return Card(
-                child: ListTile(
-
-                  title: Text(
-                    snapshot.data![index],
-                    style: TextStyle(color: Colors.black),
-                  ),
+    body: FutureBuilder<List<Map<String, String>>>(
+      future: _fetchFileUrls(),
+      builder: (BuildContext context, AsyncSnapshot<List<Map<String, String>>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasData) {
+            return ListView.builder(
+              itemCount: snapshot.data!.length,
+              itemBuilder: (BuildContext context, int index) {
+                String fileName = snapshot.data![index]['name']!;
+                String fileUrl = snapshot.data![index]['url']!;
+                return ListTile(
+                  title: Text(fileName),
                   onTap: () {
-                    // Navigate to the AudioPage with the file URL
-                    String fileUrl = snapshot.data![index];
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => AudioPage(fileUrl: fileUrl),
+                        builder: (context) => AudioPage(fileUrl: fileUrl, filename: fileName),
                       ),
                     );
                   },
-                ),
-              );
-            },
-          );
+                );
+              },
+            );
+          } else {
+            return Center(child: Text('No files found'));
+          }
+        } else {
+          return Center(child: CircularProgressIndicator());
         }
       },
     ),
