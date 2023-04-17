@@ -8,13 +8,15 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf_text/pdf_text.dart';
 
-
-
 class AudioPage extends StatefulWidget {
   final String fileUrl;
   final String filename;
 
-  const AudioPage({Key? key, required this.fileUrl, required this.filename,}) : super(key: key);
+  const AudioPage({
+    Key? key,
+    required this.fileUrl,
+    required this.filename,
+  }) : super(key: key);
 
   @override
   State<AudioPage> createState() => _MyAudioPage();
@@ -29,8 +31,6 @@ class _MyAudioPage extends State<AudioPage> {
   double speechRate = 0.5;
   List<String>? languages;
   String langCode = "en-US";
-
-
 
   PlayerState audioPlayerState = PlayerState.stopped;
   PlayerState? audioPlayer;
@@ -51,72 +51,52 @@ class _MyAudioPage extends State<AudioPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: Text(widget.filename),
-          backgroundColor: Color(0xff2D2D2D),
-        ),
-        body: Container(
-          margin: const EdgeInsets.only(top: 20),
-          child: Center(
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  ElevatedButton(
-                    child: const Text("Speak"),
-                    onPressed: extractPdfText,//_speak,
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  ElevatedButton(
-                    child: const Text("Stop"),
-                    onPressed: _stop,
-                  ),
-                ],
-              ),
-              Container(
-                margin: const EdgeInsets.only(left: 10),
-                child: Row(
-                  children: [
-                    const SizedBox(
-                      width: 80,
-                      child: Text(
-                        "Volume",
-                        style: TextStyle(fontSize: 17),
-                      ),
-                    ),
-                    Slider(
-                      min: 0.0,
-                      max: 1.0,
-                      value: volume,
-                      activeColor: Colors.deepPurple,
-                      onChanged: (value) {
-                        setState(() {
-                          volume = value;
-                        });
-
-                      },
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(left: 10),
-                      child: Text(
-                          double.parse((volume).toStringAsFixed(2)).toString(),
-                          style: const TextStyle(fontSize: 17)),
-                    )
-                  ],
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text(widget.filename),
+        backgroundColor: Color(0xff2D2D2D),
+      ),
+      body: Container(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center
+          ,
+          children: [
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.1,
+            ),
+            Icon(
+              Icons.music_note,
+              size: 100,
+              color:  Color(0xff2D2D2D),
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.1,
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.1,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                IconButton(
+                  onPressed: extractPdfText,
+                  icon: Icon(Icons.play_arrow),
+                  iconSize: 64,
+                  color: Colors.deepPurple,
                 ),
-              ),
-
-            ]),
-          ),
-        ));
+                IconButton(
+                  onPressed: _stop,
+                  icon: Icon(Icons.stop),
+                  iconSize: 64,
+                  color: Colors.deepPurple,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   void initSetting() async {
@@ -125,7 +105,6 @@ class _MyAudioPage extends State<AudioPage> {
     await flutterTts.setSpeechRate(speechRate);
     await flutterTts.setLanguage(langCode);
   }
-
 
   Future<String> readTextFromFile(String fileName) async {
     try {
@@ -138,8 +117,6 @@ class _MyAudioPage extends State<AudioPage> {
       return '';
     }
   }
-
-
 
   Future<File> downloadPdfFromFirebaseStorage(String pdfUrl) async {
     // Create a Reference to the PDF file
@@ -155,7 +132,6 @@ class _MyAudioPage extends State<AudioPage> {
     return localFile;
   }
 
-
   Future<String> extractTextFromPdf(File pdfFile) async {
     // Create a PDFDoc instance from the file
     PDFDoc pdfDoc = await PDFDoc.fromFile(pdfFile);
@@ -170,6 +146,7 @@ class _MyAudioPage extends State<AudioPage> {
 
     return pdfText;
   }
+
   Future<File> downloadFileFromUrl(String fileUrl) async {
     // Create a Reference to the file
     Reference reference = FirebaseStorage.instance.refFromURL(fileUrl);
@@ -185,15 +162,12 @@ class _MyAudioPage extends State<AudioPage> {
     return localFile;
   }
 
- void extractPdfText() async {
-   File downloadedPdf = await downloadPdfFromFirebaseStorage(widget.fileUrl);
-   String pdfText = await extractTextFromPdf(downloadedPdf);
-   print(pdfText);
-   await flutterTts.speak(pdfText);
+  void extractPdfText() async {
+    File downloadedPdf = await downloadPdfFromFirebaseStorage(widget.fileUrl);
+    String pdfText = await extractTextFromPdf(downloadedPdf);
+    print(pdfText);
+    await flutterTts.speak(pdfText);
   }
-
-
-
 
   void _stop() async {
     await flutterTts.stop();
