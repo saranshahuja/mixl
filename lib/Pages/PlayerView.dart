@@ -93,6 +93,100 @@ class _MyAudioPage extends State<AudioPage> {
                 ),
               ],
             ),
+            Container(
+              margin: const EdgeInsets.only(left: 10),
+              child: Row(
+                children: [
+                  const SizedBox(
+                    width: 80,
+                    child: Text(
+                      "Volume",
+                      style: TextStyle(fontSize: 17),
+                    ),
+                  ),
+                  Slider(
+                    min: 0.0,
+                    max: 1.0,
+                    value: volume,
+                    activeColor: Colors.deepPurple,
+                    onChanged: (value) {
+                      setState(() {
+                        volume = value;
+                      });
+                    },
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(left: 10),
+                    child: Text(
+                        double.parse((volume).toStringAsFixed(2)).toString(),
+                        style: const TextStyle(fontSize: 17)),
+                  )
+                ],
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.only(left: 10),
+              child: Row(
+                children: [
+                  const SizedBox(
+                    width: 80,
+                    child: Text(
+                      "Pitch",
+                      style: TextStyle(fontSize: 17),
+                    ),
+                  ),
+                  Slider(
+                    min: 0.5,
+                    max: 2.0,
+                    value: pitch,
+                    activeColor: Colors.deepPurple,
+                    onChanged: (value) {
+                      setState(() {
+                        pitch = value;
+                      });
+                    },
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(left: 10),
+                    child: Text(
+                        double.parse((pitch).toStringAsFixed(2)).toString(),
+                        style: const TextStyle(fontSize: 17)),
+                  )
+                ],
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.only(left: 10),
+              child: Row(
+                children: [
+                  const SizedBox(
+                    width: 80,
+                    child: Text(
+                      "Speech Rate",
+                      style: TextStyle(fontSize: 17),
+                    ),
+                  ),
+                  Slider(
+                    min: 0.0,
+                    max: 1.0,
+                    value: speechRate,
+                    activeColor: Colors.deepPurple,
+                    onChanged: (value) {
+                      setState(() {
+                        speechRate = value;
+                      });
+                    },
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(left: 10),
+                    child: Text(
+                        double.parse((speechRate).toStringAsFixed(2))
+                            .toString(),
+                        style: const TextStyle(fontSize: 17)),
+                  )
+                ],
+              ),
+            ),
           ],
         ),
       ),
