@@ -30,8 +30,8 @@ class MyApp extends StatelessWidget {
           ),
         ),
         inputDecorationTheme: InputDecorationTheme(
-            labelStyle: TextStyle(color: Colors.white), // Set input field label color to white
-            hintStyle: TextStyle(color: Colors.white), // Set input field hint color to white
+            labelStyle: TextStyle(color: Colors.black), // Set input field label color to white
+            hintStyle: TextStyle(color: Colors.black), // Set input field hint color to white
             focusedBorder: OutlineInputBorder(
               borderSide: BorderSide(color: Colors.deepPurpleAccent),
             ),

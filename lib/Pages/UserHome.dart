@@ -2,9 +2,10 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:mixl/Pages/PlayerView.dart';
+
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:mixl/Pages/PlayerView.dart';
+
 import 'Login.dart';
 
 
@@ -45,6 +46,20 @@ class _UserHomeState extends State<UserHome> {
 
 
 
+  Future<List<String>> fetchFileList() async {
+    List<String> fileList = [];
+
+    // Replace 'your-path' with the actual path where your files are stored in Firebase Storage
+    final firebaseStorageRef = FirebaseStorage.instance.ref('');
+    final result = await firebaseStorageRef.list();
+    for (var item in result.items) {
+      fileList.add(item.fullPath);
+    }
+    print(fileList.length);
+    return fileList;
+  }
+
+
 
   Future<void> _signOut(BuildContext context) async {
     try {
@@ -71,6 +86,41 @@ class _UserHomeState extends State<UserHome> {
           ),
         ],
       ),
+    body: FutureBuilder<List<String>>(
+      future: fetchFileList(),
+      builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else {
+          return ListView.builder(
+            itemCount: snapshot.data!.length,
+            itemBuilder: (BuildContext context, int index) {
+              return Card(
+                child: ListTile(
+
+                  title: Text(
+                    snapshot.data![index],
+                    style: TextStyle(color: Colors.black),
+                  ),
+                  onTap: () {
+                    // Navigate to the AudioPage with the file URL
+                    String fileUrl = snapshot.data![index];
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AudioPage(fileUrl: fileUrl),
+                      ),
+                    );
+                  },
+                ),
+              );
+            },
+          );
+        }
+      },
+    ),
 
 
     );
