@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
       title: 'Mixl',
       theme: ThemeData(
         primaryColor: Colors.white70,
-        accentColor: Colors.deepPurpleAccent,
+        hintColor: Colors.deepPurpleAccent,
         scaffoldBackgroundColor: Colors.white, // Set the default Scaffold background color to black
 
         elevatedButtonTheme: ElevatedButtonThemeData(
